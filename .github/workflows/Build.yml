@@ -104,5 +104,5 @@ jobs:
     uses: actions/upload-artifact@v3
     with:
      name: fallout2-ce-${{ matrix.cfg.artifact-suffix }}
-     path: ${{ matrix.cfg.name}/x${{ matrix.cfg.arch }}
+     path: ${{ matrix.cfg.name }}/x${{ matrix.cfg.arch }}
      retention-days: 7

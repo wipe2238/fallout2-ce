@@ -29,11 +29,11 @@ jobs:
    fail-fast: false
    matrix:
     cfg:
-    - { name: GCC,    os: ubuntu-22.04, cc: g++,   ver: null, arch: 32, generator: "Unix Makefiles",        allow-fail: false, artifact: "Build/fallout2-ce", artifact-os: linux }
-    - { name: GCC,    os: ubuntu-22.04, cc: g++,   ver: null, arch: 64, generator: "Unix Makefiles",        allow-fail: true,  artifact: "Build/fallout2-ce", artifact-os: linux }
-    - { name: CLang,  os: ubuntu-22.04, cc: clang, ver: null, arch: 32, generator: "Unix Makefiles",        allow-fail: false, artifact: no }
-    - { name: VS2019, os: windows-2019, cc: cl,    ver: null, arch: 32, generator: "Visual Studio 16 2019", allow-fail: false, artifact: "Build/*/fallout2-ce.exe", artifact-os: windows }
-    - { name: VS2022, os: windows-2022, cc: cl,    ver: null, arch: 32, generator: "Visual Studio 17 2022", allow-fail: true,  artifact: no }
+    - { name: GCC,    os: ubuntu-22.04, cc: gcc,   cxx: g++,     ver: null, arch: 32, generator: "Unix Makefiles",        can-fail: false, artifact: "Build/fallout2-ce", artifact-os: linux }
+    - { name: GCC,    os: ubuntu-22.04, cc: gcc,   cxx: g++,     ver: null, arch: 64, generator: "Unix Makefiles",        can-fail: true,  artifact: "Build/fallout2-ce", artifact-os: linux }
+    - { name: CLang,  os: ubuntu-22.04, cc: clang, cxx: clang++, ver: null, arch: 32, generator: "Unix Makefiles",        can-fail: false, artifact: no }
+    - { name: VS2019, os: windows-2019, cc: cl,    cxx: cl,      ver: null, arch: 32, generator: "Visual Studio 16 2019", can-fail: false, artifact: "Build/*/fallout2-ce.exe", artifact-os: windows }
+    - { name: VS2022, os: windows-2022, cc: cl,    cxx, cl,      ver: null, arch: 32, generator: "Visual Studio 17 2022", can-fail: true,  artifact: no }
 
   steps:
 
@@ -88,13 +88,16 @@ jobs:
                 platform="-A x64"
              fi
           fi
-          CC=${{ matrix.cfg.cc }}${{ matrix.cfg.ver }} cmake -B Build -G "${{ matrix.cfg.generator }}" $platform $toolchain 2>&1 
+          cmake -B Build -G "${{ matrix.cfg.generator }}" $platform $toolchain 2>&1 
+    env:
+     CC:  ${{ matrix.cfg.cc }}${{ matrix.cfg.ver }} 
+     CXX: ${{ matrix.cfg.cxx }}${{ matrix.cfg.ver }}
 
   - name: Build
     if:   success()
     run:  |
           cmake --build Build --config Release && echo BUILD_OK=1 >> $GITHUB_ENV
-    continue-on-error: ${{ matrix.cfg.allow-fail }}
+    continue-on-error: ${{ matrix.cfg.can-fail }}
 
   - name: Artifact prepare
     if:   matrix.cfg.artifact != 'no' && env.BUILD_OK == 1

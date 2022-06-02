@@ -29,9 +29,9 @@ jobs:
    fail-fast: false
    matrix:
     cfg:
-    - { name: GCC,    os: ubuntu-latest   cc: gcc,   ver: null, arch: 32, generator: "Unix Makefiles",        allow-fail: no,  artifact: Build/fallout2-ce, artifact-suffix: linux32 }
-    - { name: GCC,    os: ubuntu-latest   cc: gcc,   ver: null, arch: 64, generator: "Unix Makefiles",        allow-fail: yes, artifact: Build/fallout2-ce, artifact-suffix: linux64 }
-    - { name: CLang,  os: ubuntu-latest   cc: clang, ver: null, arch: 32, generator: "Unix Makefiles",        allow-fail: no,  artifact: no }
+    - { name: GCC,    os: ubuntu-latest,  cc: gcc,   ver: null, arch: 32, generator: "Unix Makefiles",        allow-fail: no,  artifact: Build/fallout2-ce, artifact-suffix: linux32 }
+    - { name: GCC,    os: ubuntu-latest,  cc: gcc,   ver: null, arch: 64, generator: "Unix Makefiles",        allow-fail: yes, artifact: Build/fallout2-ce, artifact-suffix: linux64 }
+    - { name: CLang,  os: ubuntu-latest,  cc: clang, ver: null, arch: 32, generator: "Unix Makefiles",        allow-fail: no,  artifact: no }
     - { name: VS2019, os: windows-latest, cc: cl,    ver: null, arch: 32, generator: "Visual Studio 16 2019", allow-fail: no,  artifact: Build/*/fallout2-ce.exe, artifact-suffix: windows32 }
     - { name: VS2022, os: windows-latest, cc: cl,    ver: null, arch: 32, generator: "Visual Studio 17 2022", allow-fail: yes, artifact: no }
 

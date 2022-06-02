@@ -61,7 +61,7 @@ jobs:
           # Extra packages are needed to compile 32bit targets on 64bit host
           if [[ $arch -eq "i386" ]]; then
              echo ::group::Multilib
-             sudo apt install gcc${{ matrix.cfg.ver }}-multilib
+             sudo apt install gcc${{ matrix.cfg.ver }}-multilib g++${{ matrix.cfg.ver }}-multilib
              echo ::endgroup::
           fi
 

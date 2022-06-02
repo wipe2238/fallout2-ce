@@ -29,11 +29,11 @@ jobs:
    fail-fast: false
    matrix:
     cfg:
-    - { name: GCC,    os: ubuntu-22.04,   cc: gcc,   ver: null, arch: 64, generator: "Unix Makefiles",        allow-fail: true,  artifact: Build/fallout2-ce, artifact-suffix: linux64 }
-    - { name: GCC,    os: ubuntu-22.04,   cc: gcc,   ver: null, arch: 32, generator: "Unix Makefiles",        allow-fail: false, artifact: Build/fallout2-ce, artifact-suffix: linux32 }
-    - { name: CLang,  os: ubuntu-22.04,   cc: clang, ver: null, arch: 32, generator: "Unix Makefiles",        allow-fail: false, artifact: no }
-    - { name: VS2019, os: windows-latest, cc: cl,    ver: null, arch: 32, generator: "Visual Studio 16 2019", allow-fail: false, artifact: Build/*/fallout2-ce.exe, artifact-suffix: windows32 }
-    - { name: VS2022, os: windows-latest, cc: cl,    ver: null, arch: 32, generator: "Visual Studio 17 2022", allow-fail: true,  artifact: no }
+    - { name: GCC,    os: ubuntu-22.04, cc: gcc,   ver: null, arch: 32, generator: "Unix Makefiles",        allow-fail: false, artifact: Build/fallout2-ce, artifact-suffix: linux32 }
+    - { name: GCC,    os: ubuntu-22.04, cc: gcc,   ver: null, arch: 64, generator: "Unix Makefiles",        allow-fail: true,  artifact: Build/fallout2-ce, artifact-suffix: linux64 }
+    - { name: CLang,  os: ubuntu-22.04, cc: clang, ver: null, arch: 32, generator: "Unix Makefiles",        allow-fail: false, artifact: no }
+    - { name: VS2019, os: windows-2019, cc: cl,    ver: null, arch: 32, generator: "Visual Studio 16 2019", allow-fail: false, artifact: Build/*/fallout2-ce.exe, artifact-suffix: windows32 }
+    - { name: VS2022, os: windows-2022, cc: cl,    ver: null, arch: 32, generator: "Visual Studio 17 2022", allow-fail: true,  artifact: no }
 
   steps:
 

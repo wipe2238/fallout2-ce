@@ -7,12 +7,14 @@ on:
   - 'src/**.cc'
   - 'src/**.h'
   - '**/CMakeLists.txt'
+  - '**/*.cmake'
  pull_request:
   paths:
   - '.github/workflows/Build.yml'
   - 'src/**.cc'
   - 'src/**.h'
   - '**/CMakeLists.txt'
+  - '**/*.cmake'
 
 defaults:
  run:
@@ -20,50 +22,87 @@ defaults:
 
 jobs:
 
- build-windows:
-  runs-on: windows-latest
+ Build:
+  name:    ${{ matrix.cfg.name }} x${{ matrix.cfg.arch }}
+  runs-on: ${{ matrix.cfg.os }}
+  strategy:
+   fail-fast: false
+   matrix:
+    cfg:
+    - { name: GCC,    os: ubuntu-latest   cc: gcc,   ver: null, arch: 32, generator: "Unix Makefiles",        allow-fail: no,  artifact: Build/fallout2-ce, artifact-suffix: linux32 }
+    - { name: GCC,    os: ubuntu-latest   cc: gcc,   ver: null, arch: 64, generator: "Unix Makefiles",        allow-fail: yes, artifact: Build/fallout2-ce, artifact-suffix: linux64 }
+    - { name: CLang,  os: ubuntu-latest   cc: clang, ver: null, arch: 32, generator: "Unix Makefiles",        allow-fail: no,  artifact: no }
+    - { name: VS2019, os: windows-latest, cc: cl,    ver: null, arch: 32, generator: "Visual Studio 16 2019", allow-fail: no,  artifact: Build/*/fallout2-ce.exe, artifact-suffix: windows32 }
+    - { name: VS2022, os: windows-latest, cc: cl,    ver: null, arch: 32, generator: "Visual Studio 17 2022", allow-fail: yes, artifact: no }
+
   steps:
+
+  - name: Install
+    if:   runner.os == 'Linux'
+    run:  |
+          :
+          #[Linux] Extra setup is needed to install 32bit packages on 64bit host
+          if [[ ${{ matrix.cfg.arch }} -eq 32 ]]; then
+             arch=i386
+             sudo dpkg --add-architecture $arch
+             echo [apt] added architecture $arch
+          else
+             arch=amd64
+          fi
+
+          echo ::group::apt update
+          sudo apt update 2>&1
+          echo ::endgroup::
+
+          echo ::group::Compiler
+          sudo apt install ${{ matrix.cfg.cc }}${{ matrix.cfg.ver }}
+          echo ::endgroup::
+
+          # [Linux] extra packages are needed to compile 32bit targets on 64bit host
+          if [[ $arch -eq "i386" ]]; then
+             echo ::group::Multilib
+             sudo apt install gcc${{ matrix.cfg.ver }}-multilib
+             echo ::endgroup::
+          fi
 
   - name: Clone
     uses: actions/checkout@v2
 
   - name: Prepare
-    run:  cmake -B build/x86-windows -A Win32
+    run:  |
+          :
+          #[Linux] Toolchain file is used to compile 32bit targets on 64bit hosts
+          # NOTE: without proper 32@64 toolchain setup CMake can't find OpenGL libraries
+          if [[ "$RUNNER_OS" == "Linux" ]] && [[ ${{ matrix.cfg.arch }} -eq 32 ]]; then
+             toolchain="-DCMAKE_TOOLCHAIN_FILE=CMake/Toolchain/Linux32.cmake"
+          fi
+          #[VisualStudio] '-A' switch is used to compile 32bit targets on 64bit hosts
+          if [[ "${{ matrix.cfg.cc }}" == "cl" ]]; then
+             if [[ ${{ matrix.cfg.arch }} -eq 32 ]]; then
+                platform="-A Win32"
+             else
+                platform="-A x64"
+             fi
+          fi
+          cmake -B Build -G "${{ matrix.cfg.generator }}" $platform $toolchain 2>&1
 
-  - name: Release build
-    run:  cmake --build build/x86-windows --config Release
+  - name: Build
+    if:   success()
+    run:  cmake --build Build --config Release
+    continue-on-error: ${{ matrix.cfg.allow-fail }}
 
-  - name: Artifact
+  - name: Artifact prepare
+    if:   success() && matrix.cfg.artifact != 'no'
+    run:  |
+          :
+          dir="${{ matrix.cfg.name }}/x${{ matrix.cfg.arch }}"
+          mkdir -p "$dir"
+          cp "${{ matrix.cfg.artifact }}" "$dir"
+
+  - name: Artifact upload
+    if:   success() && matrix.cfg.artifact != 'no'
     uses: actions/upload-artifact@v3
     with:
-     name: x86-windows-fallout2-ce
-     path: |
-      build/x86-windows/Release/fallout2-ce.exe
-     retention-days: 7
-
- build-linux32:
-  runs-on: ubuntu-22.04
-  steps:
-
-  - name: Clone
-    uses: actions/checkout@v2
-
-  - name: Install dependencies
-    run: |
-     sudo dpkg --add-architecture i386
-     sudo apt update
-     sudo apt install g++-multilib libsdl2-dev:i386 zlib1g-dev:i386
-
-  - name: Prepare
-    run: cmake -DCMAKE_C_FLAGS="-m32" -DCMAKE_CXX_FLAGS="-m32" -B build/x86-linux
-
-  - name: Release build
-    run: cmake --build build/x86-linux --config Release
-
-  - name: Artifact
-    uses: actions/upload-artifact@v3
-    with:
-     name: x86-linux-fallout2-ce
-     path: |
-      build/x86-linux/fallout2-ce
+     name: fallout2-ce-${{ matrix.cfg.artifact-suffix }}
+     path: ${{ matrix.cfg.name}/x${{ matrix.cfg.arch }}
      retention-days: 7

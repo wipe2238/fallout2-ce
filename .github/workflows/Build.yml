@@ -22,6 +22,17 @@ defaults:
 
 jobs:
 
+ StaticAnalysis:
+  name:    Static analysis
+  runs-on: ubuntu-latest
+  steps:
+
+  - name: Install
+    run:  apt install cppcheck
+
+  - name: cppcheck
+    run:  cppcheck --std=c++17 src/
+
  Build:
   name:    ${{ matrix.cfg.name }} x${{ matrix.cfg.arch }}
   runs-on: ${{ matrix.cfg.os }}

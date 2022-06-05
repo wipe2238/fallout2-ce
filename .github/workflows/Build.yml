@@ -25,6 +25,7 @@ jobs:
  Build:
   name:    ${{ matrix.cfg.name }} x${{ matrix.cfg.arch }}
   runs-on: ${{ matrix.cfg.os }}
+  needs:   [StaticAnalysis]
   strategy:
    fail-fast: false
    matrix:

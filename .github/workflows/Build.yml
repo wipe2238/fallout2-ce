@@ -115,7 +115,11 @@ jobs:
                   echo GHA_TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=CMake/Toolchain/Linux32.cmake" >> $GITHUB_ENV
                fi
 
-               echo GHA_PM_LIBS="libsdl2-dev:$apt zlib1g-dev:$apt libibus-dev:$apt libpulse-dev:$apt" >> $GITHUB_ENV
+               if [[ "$ImageOS" == "ubuntu20" ]]; then
+                  echo GHA_PM_LIBS="libsdl2-dev:$apt zlib1g-dev:$apt libibus-1.0-dev:$apt libpulse-dev:$apt" >> $GITHUB_ENV
+               else # "$ImageOS" == "ubuntu22"
+                  echo GHA_PM_LIBS="libsdl2-dev:$apt zlib1g-dev:$apt" >> $GITHUB_ENV
+               fi
           elif [[ $RUNNER_OS == "macOS" ]]; then
                [[ "$ver" != "" ]] && verPM="@$ver"
                echo GHA_PM="brew" >> $GITHUB_ENV

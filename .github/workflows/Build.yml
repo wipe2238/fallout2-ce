@@ -22,9 +22,29 @@ defaults:
 
 jobs:
 
+ StaticAnalysis:
+  name:    Static analysis
+  runs-on: ubuntu-latest
+  steps:
+
+  - name: Install
+    run:  |
+          :
+          echo ::group::apt update
+          sudo apt update 2>&1
+          echo ::endgroup::
+          sudo apt install cppcheck
+
+  - name: Clone
+    uses: actions/checkout@v3
+
+  - name: cppcheck
+    run:  cppcheck --std=c++17 src/
+
  Build:
   name:    ${{ matrix.cfg.name }} x${{ matrix.cfg.arch }}
   runs-on: ${{ matrix.cfg.os }}
+  needs:   [StaticAnalysis]
   strategy:
    fail-fast: false
    matrix:
@@ -138,8 +158,6 @@ jobs:
 
   - name: Clone
     uses: actions/checkout@v3
-    with:
-     repository: alexbatalov/fallout2-ce
 
   - name: Prepare
     run:  cmake -B Build -G "${{ matrix.cfg.generator }}" $GHA_PLATFORM $GHA_TOOLCHAIN 2>&1 

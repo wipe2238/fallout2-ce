@@ -62,7 +62,7 @@ jobs:
   steps:
   - name: Configure
     run:  |
-          :
+          : Here be dragons :
           set -x
           arch=${{ matrix.cfg.arch }}
           ver="${{ matrix.cfg.ver }}"
@@ -97,7 +97,11 @@ jobs:
                echo GHA_PM="sudo apt" >> $GITHUB_ENV
                apt="amd64"
 
-               echo GHA_PM_COMPILER="$cc$verPM $cxx$verPM" >> $GITHUB_ENV
+               if [[ "$cc" == "clang" ]] && [[ "$cxx" == "clang++" ]]; then
+                  echo GHA_PM_COMPILER="$cc$verPM" >> $GITHUB_ENV
+               else
+                  echo GHA_PM_COMPILER="$cc$verPM $cxx$verPM" >> $GITHUB_ENV
+               fi
 
                # Handle building 32bit executable on 64bit host
                if [[ $arch -eq 32 ]]; then
@@ -159,6 +163,7 @@ jobs:
   - name: Clone
     uses: actions/checkout@v3
 
+  # Using ${{ env.NAME }} here (instead of usual $NAME) to make full command line clearly displayed, without need to check step environment first
   - name: Prepare
     run:  cmake -B Build -G "${{ matrix.cfg.generator }}" ${{ env.GHA_PLATFORM }} ${{ env.GHA_TOOLCHAIN }} 2>&1
     env:

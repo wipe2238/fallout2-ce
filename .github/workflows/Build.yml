@@ -51,9 +51,10 @@ jobs:
     cfg:
     - { name: Linux GCC,      os: ubuntu-22.04, cc: gcc,   cxx: g++,     ver: null, arch: 32, generator: "Unix Makefiles",        can-fail: false, artifact: Build/fallout2-ce,             artifact-os: linux }
     - { name: Linux GCC,      os: ubuntu-22.04, cc: gcc,   cxx: g++,     ver: null, arch: 64, generator: "Unix Makefiles",        can-fail: true,  artifact: Build/fallout2-ce,             artifact-os: linux }
-    - { name: Linux GCC 10,   os: ubuntu-20.04, cc: gcc,   cxx: g++,     ver: 10,   arch: 32, generator: "Unix Makefiles",        can-fail: false, artifact: NO,                            artifact-os: linux }
-    - { name: Linux GCC 10,   os: ubuntu-20.04, cc: gcc,   cxx: g++,     ver: 10,   arch: 64, generator: "Unix Makefiles",        can-fail: true,  artifact: NO,                            artifact-os: linux }
-    - { name: OSX CLang,      os: ubuntu-22.04, cc: clang, cxx: clang++, ver: null, arch: 64, generator: "Unix Makefiles",        can-fail: true,  artifact: NO,                            artifact-os: mac }
+    - { name: Linux GCC 10,   os: ubuntu-22.04, cc: gcc,   cxx: g++,     ver: 10,   arch: 32, generator: "Unix Makefiles",        can-fail: false, artifact: NO,                            artifact-os: linux }
+    - { name: Linux GCC 10,   os: ubuntu-22.04, cc: gcc,   cxx: g++,     ver: 10,   arch: 64, generator: "Unix Makefiles",        can-fail: true,  artifact: NO,                            artifact-os: linux }
+    - { name: MacOS 11 CLang, os: macOS-11,     cc: clang, cxx: clang++, ver: null, arch: 64, generator: "Unix Makefiles",        can-fail: true,  artifact: NO,                            artifact-os: mac }
+    - { name: MacOS 12 CLang, os: macOS-12,     cc: clang, cxx: clang++, ver: null, arch: 64, generator: "Unix Makefiles",        can-fail: true,  artifact: NO,                            artifact-os: mac }
     - { name: Windows VS2019, os: windows-2019, cc: cl,    cxx: cl,      ver: null, arch: 32, generator: "Visual Studio 16 2019", can-fail: false, artifact: NO,                            artifact-os: windows }
     - { name: Windows VS2019, os: windows-2019, cc: cl,    cxx: cl,      ver: null, arch: 64, generator: "Visual Studio 16 2019", can-fail: true,  artifact: NO,                            artifact-os: windows }
     - { name: Windows VS2022, os: windows-2022, cc: cl,    cxx, cl,      ver: null, arch: 32, generator: "Visual Studio 17 2022", can-fail: false, artifact: Build/Release/fallout2-ce.exe, artifact-os: windows }
@@ -149,7 +150,9 @@ jobs:
           echo ::endgroup::
 
           if [[ ${{ matrix.cfg.arch }} -eq 32 ]] && ([[ "$ImageOS" == "ubuntu20" ]] || [[ "${{ matrix.cfg.os }}" == "ubuntu-20.04" ]]); then
+             echo ::group::Fix Ubuntu 20
              $GHA_PM install --allow-downgrades libpcre2-8-0=10.34-7
+             echo ::endgroup::
           fi
 
           if [[ "$GHA_PM_COMPILER" != "" ]] || [[ "$GHA_PM_COMPILER_EXTRA" ]]; then

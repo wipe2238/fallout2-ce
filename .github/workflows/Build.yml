@@ -115,7 +115,7 @@ jobs:
                   echo GHA_TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=CMake/Toolchain/Linux32.cmake" >> $GITHUB_ENV
                fi
 
-               echo GHA_PM_LIBS="libsdl2-dev:$apt zlib1g-dev:$apt libibus:$apt libpulse:$apt" >> $GITHUB_ENV
+               echo GHA_PM_LIBS="libsdl2-dev:$apt zlib1g-dev:$apt libibus-dev:$apt libpulse-dev:$apt" >> $GITHUB_ENV
           elif [[ $RUNNER_OS == "macOS" ]]; then
                [[ "$ver" != "" ]] && verPM="@$ver"
                echo GHA_PM="brew" >> $GITHUB_ENV

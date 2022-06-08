@@ -116,7 +116,6 @@ jobs:
                fi
 
                echo GHA_PM_LIBS="libsdl2-dev:$apt zlib1g-dev:$apt" >> $GITHUB_ENV
-               fi
           elif [[ $RUNNER_OS == "macOS" ]]; then
                [[ "$ver" != "" ]] && verPM="@$ver"
                echo GHA_PM="brew" >> $GITHUB_ENV

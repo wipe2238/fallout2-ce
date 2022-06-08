@@ -63,7 +63,7 @@ jobs:
   - name: Configure
     run:  |
           :
-          #set -x
+          set -x
           arch=${{ matrix.cfg.arch }}
           ver="${{ matrix.cfg.ver }}"
           cc="${{ matrix.cfg.cc }}"
@@ -111,7 +111,7 @@ jobs:
                   echo GHA_TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=CMake/Toolchain/Linux32.cmake" >> $GITHUB_ENV
                fi
 
-               echo GHA_LIBS="libsdl2-dev:$apt zlib1g-dev:$apt" >> $GITHUB_ENV
+               echo GHA_PM_LIBS="libsdl2-dev:$apt zlib1g-dev:$apt" >> $GITHUB_ENV
           elif [[ $RUNNER_OS == "macOS" ]]; then
                [[ "$ver" != "" ]] && verPM="@$ver"
                echo GHA_PM="brew" >> $GITHUB_ENV
@@ -125,7 +125,7 @@ jobs:
                echo GHA_LIBS="sdl2" >> $GITHUB_ENV
           elif [[ $RUNNER_OS == "Windows" ]]; then
                # VisualStudio; '-A' switch is used to compile 32bit targets on 64bit hosts
-               if [[ "${{ matrix.cfg.generator }}" =~ "^Visual Studio" ]]; then
+               if [[ "${{ matrix.cfg.generator }}" =~ ^Visual ]]; then
                   if [[ $arch  -eq 32 ]]; then
                      echo GHA_PLATFORM="-A Win32" >> $GITHUB_ENV
                   else
@@ -138,9 +138,9 @@ jobs:
     if:   env.GHA_PM != ''
     run:  |
           :
-          #set -x
+          set -x
 
-          echo ::group::${GHA_PM/#sudo //} update
+          echo ::group::${GHA_PM/#sudo /} update
           $GHA_PM update 2>&1
           echo ::endgroup::
 

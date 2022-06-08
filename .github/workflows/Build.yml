@@ -125,7 +125,7 @@ jobs:
                echo GHA_LIBS="sdl2" >> $GITHUB_ENV
           elif [[ $RUNNER_OS == "Windows" ]]; then
                # VisualStudio; '-A' switch is used to compile 32bit targets on 64bit hosts
-               if [[ "${{ matrix.cfg.generator }}" =~ ^Visual Studio ]]; then
+               if [[ "${{ matrix.cfg.generator }}" =~ "^Visual Studio" ]]; then
                   if [[ $arch  -eq 32 ]]; then
                      echo GHA_PLATFORM="-A Win32" >> $GITHUB_ENV
                   else
@@ -160,7 +160,7 @@ jobs:
     uses: actions/checkout@v3
 
   - name: Prepare
-    run:  cmake -B Build -G "${{ matrix.cfg.generator }}" $GHA_PLATFORM $GHA_TOOLCHAIN 2>&1 
+    run:  cmake -B Build -G "${{ matrix.cfg.generator }}" ${{ env.GHA_PLATFORM }} ${{ env.GHA_TOOLCHAIN }} 2>&1
     env:
      CC:  ${{ env.GHA_CC }} 
      CXX: ${{ env.GHA_CXX }}

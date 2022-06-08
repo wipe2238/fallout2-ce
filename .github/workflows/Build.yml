@@ -127,7 +127,7 @@ jobs:
                   echo GHA_PM_COMPILER="llvm$verPM" >> $GITHUB_ENV
                fi
 
-               echo GHA_LIBS="sdl2" >> $GITHUB_ENV
+               echo GHA_PM_LIBS="sdl2" >> $GITHUB_ENV
           elif [[ $RUNNER_OS == "Windows" ]]; then
                # VisualStudio; '-A' switch is used to compile 32bit targets on 64bit hosts
                if [[ "${{ matrix.cfg.generator }}" =~ ^Visual ]]; then

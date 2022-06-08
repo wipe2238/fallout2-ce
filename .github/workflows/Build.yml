@@ -115,10 +115,7 @@ jobs:
                   echo GHA_TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=CMake/Toolchain/Linux32.cmake" >> $GITHUB_ENV
                fi
 
-               if [[ "$ImageOS" == "ubuntu20" ]]; then
-                  echo GHA_PM_LIBS="libsdl2-dev:$apt zlib1g-dev:$apt libibus-1.0-dev:$apt libpulse-dev:$apt" >> $GITHUB_ENV
-               else # "$ImageOS" == "ubuntu22"
-                  echo GHA_PM_LIBS="libsdl2-dev:$apt zlib1g-dev:$apt" >> $GITHUB_ENV
+               echo GHA_PM_LIBS="libsdl2-dev:$apt zlib1g-dev:$apt" >> $GITHUB_ENV
                fi
           elif [[ $RUNNER_OS == "macOS" ]]; then
                [[ "$ver" != "" ]] && verPM="@$ver"
@@ -148,9 +145,13 @@ jobs:
           :
           set -x
 
-          echo ::group::${GHA_PM/#sudo /} update
+          echo ::group::Update package manager
           $GHA_PM update 2>&1
           echo ::endgroup::
+
+          if [[ "$ImageOS" == "ubuntu20" ]] || [[ "${{ matrix.cfg.os }}" == "ubuntu-20.04" ]]; then
+             $GHA_PM install --allow-downgrades libpcre2-8-0=10.34-7
+          fi
 
           if [[ "$GHA_PM_COMPILER" != "" ]] || [[ "$GHA_PM_COMPILER_EXTRA" ]]; then
              echo ::group::Compiler

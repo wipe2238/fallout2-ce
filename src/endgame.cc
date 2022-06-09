@@ -195,8 +195,8 @@ void endgamePlayMovie()
     backgroundSoundLoad("akiss", 12, 14, 15);
     coreDelayProcessingEvents(3000);
 
-    // NOTE: Result is ignored. I guess there was some kind of switch for male
-    // vs. female ending, but it was not implemented.
+    // NOTE: Result is ignored; this is a leftover from Fallout1 code, where each gender had their own "walking into sunset" movie
+    // TODO SFALL: "Fallout1Behavior" plays movie 10 or 11 based on the player's gender before the credits
     critterGetStat(gDude, STAT_GENDER);
 
     creditsOpen("credits.txt", -1, false);

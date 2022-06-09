@@ -699,6 +699,7 @@ int itemGetWeight(Object* item)
         case PROTO_ID_HARDENED_POWER_ARMOR:
         case PROTO_ID_ADVANCED_POWER_ARMOR:
         case PROTO_ID_ADVANCED_POWER_ARMOR_MK_II:
+            // TODO SFALL: "Fallout1Behavior" disables halving the weight for power armor items
             weight /= 2;
             break;
         }

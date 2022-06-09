@@ -953,6 +953,7 @@ int scriptsHandleRequests()
     if ((gScriptsRequests & SCRIPT_REQUEST_ENDGAME) != 0) {
         gScriptsRequests &= ~SCRIPT_REQUEST_ENDGAME;
         endgamePlaySlideshow();
+        // TODO SFALL: "Fallout1Behavior" disables playing the final movie/credits after the endgame slideshow
         endgamePlayMovie();
     }
 
